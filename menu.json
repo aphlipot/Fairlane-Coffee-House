@@ -1,0 +1,24 @@
+{
+  "Coffee": [
+    {"Product Name": "Espresso", "Description": "Two shots of our signature espresso blend.", "Flavor": "Strong, bold, refreshing", "Size": "Double shot (3 oz)", "Calorie": 3, "Price": 3.00},
+    {"Product Name": "Espresso Macchiato", "Description": "A traditional macchiato: two shots of our signature espresso topped with a spoonful of foamed milk.", "Flavor": "Strong and milky", "Size": "4 oz", "Calorie": 15, "Price": 3.50},
+    {"Product Name": "Cortado", "Description": "Equal parts espresso (two shots) and steamed milk.", "Flavor": "Strong and milky", "Size": "4 oz", "Calorie": 15, "Price": 3.75},
+    {"Product Name": "Cappuccino", "Description": "Equal parts espresso (two shots), steamed milk, and milk foam.", "Flavor": "Moderately strong. Balanced and rich with a velvety texture.", "Size": "6 oz", "Calorie": 150, "Price": 4.25},
+    {"Product Name": "Latte", "Description": "Two shots of espresso, steamed milk, and a thin layer of milk foam on top.", "Flavor": "Mild. Milky and creamy, sweet.", "Size": "12 oz", "Calorie": 300, "Price": 4.75},
+    {"Product Name": "Americano", "Description": "Two shots of espresso poured over 6 oz of hot water.", "Flavor": "Moderately strong", "Size": "8 oz", "Calorie": 10, "Price": 3.25},
+    {"Product Name": "Affogato", "Description": "Scoops of Guernsey vanilla ice cream with two shots of our signature espresso pulled on top. Creamy, sweet, and rich.", "Flavor": "", "Size": "", "Calorie": 240, "Price": 5.25},
+    {"Product Name": "Iced Coffee", "Description": "Our Compass Blend coffee brewed over ice and served over fresh ice.", "Flavor": "Strong, bright, and refreshing", "Size": ["Small (8 oz)", "Medium (12 oz)", "Large (16 oz)"], "Calorie": [10, 15, 20], "Price": [3.75, 4.25, 4.75]},
+    {"Product Name": "Regular Coffee", "Description": "Freshly brewed from carefully selected beans, roasted and ground in house.", "Flavor": "Strong and refreshing", "Size": ["Small (8 oz)", "Medium (12 oz)", "Large (16 oz)"], "Calorie": [10, 15, 20], "Price": [3.25, 3.75, 4.25]}
+  ],
+  "Soft Drinks": [
+    {"Product Name": "Boba Tea", "Description": "Tea blended with milk, fruit, and fruit juice, finished with tapioca pearls.", "Flavor": ["Banana", "Blueberry", "Peach", "Mango", "Passion Fruit", "Strawberry"], "Size": ["Small (8 oz)", "Medium (12 oz)", "Large (16 oz)"], "Calorie": [250, 375, 500], "Price": [3.50, 4.00, 4.50]},
+    {"Product Name": "Smoothie", "Description": "Blended fruit drink with a base of yogurt and milk.", "Flavor": ["Banana", "Blueberry", "Peach", "Mango", "Passion Fruit", "Strawberry"], "Size": ["Small (8 oz)", "Medium (12 oz)", "Large (16 oz)"], "Calorie": [250, 375, 500], "Price": [3.50, 4.00, 4.50]}
+  ],
+  "Desserts": [
+    {"Product Name": "Donut", "Description": "Glazed yeast donut made fresh each morning.", "Flavor": "", "Size": "", "Calorie": 298, "Price": 2.00},
+    {"Product Name": "Cupcake", "Description": "Vanilla cupcake with buttercream frosting.", "Flavor": "", "Size": "", "Calorie": 210, "Price": 2.25},
+    {"Product Name": "Brownie", "Description": "Fudgy chocolate brownie.", "Flavor": "", "Size": "", "Calorie": 200, "Price": 2.00},
+    {"Product Name": "Muffin", "Description": "Blueberry muffin with a crumb top.", "Flavor": "", "Size": "", "Calorie": 467, "Price": 4.50},
+    {"Product Name": "Cookie", "Description": "Chocolate chip cookie, baked in house.", "Flavor": "", "Size": "", "Calorie": 242, "Price": 2.50}
+  ]
+}
