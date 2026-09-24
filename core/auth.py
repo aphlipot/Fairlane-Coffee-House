@@ -98,6 +98,7 @@ def login(identifier, password):
     if row and check_secret(password, row["password_hash"]):
         user = {k: row[k] for k in PUBLIC_FIELDS.split(", ")}
         st.session_state["user"] = user
+        st.session_state["just_logged_in"] = True
         return user
     return None
 

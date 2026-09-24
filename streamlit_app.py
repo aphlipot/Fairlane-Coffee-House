@@ -17,8 +17,9 @@ if token:
 user = auth.current_user()
 role = user["role"] if user else None
 
+is_manager = role == "manager"
 cafe = [
-    st.Page("views/home.py", title="Home", icon=":material/storefront:", default=True),
+    st.Page("views/home.py", title="Home", icon=":material/storefront:", default=not is_manager),
     st.Page("views/menu.py", title="Menu", icon=":material/local_cafe:"),
     st.Page("views/order.py", title="Order", icon=":material/shopping_bag:"),
     st.Page("views/reservations.py", title="Reserve a table", icon=":material/table_restaurant:"),
@@ -31,20 +32,28 @@ account = [
     st.Page("views/my_orders.py", title="My orders", icon=":material/receipt_long:"),
     st.Page("views/account.py", title="Account", icon=":material/person:"),
 ]
-sections = {"Café": cafe, "You": account}
+sections = {}
+if is_manager:
+    # Managers land on the dashboard.
+    sections["Management"] = [
+        st.Page("views/dashboard.py", title="Manager dashboard", icon=":material/monitoring:", default=True),
+        st.Page("views/insights.py", title="Customer insights", icon=":material/insights:"),
+        st.Page("views/staff.py", title="Staff and payroll", icon=":material/badge:"),
+        st.Page("views/costs.py", title="Costs", icon=":material/price_change:"),
+        st.Page("views/hiring.py", title="Hiring", icon=":material/group_add:"),
+        st.Page("views/marketing.py", title="Marketing studio", icon=":material/campaign:"),
+        st.Page("views/team.py", title="Users and roles", icon=":material/admin_panel_settings:"),
+    ]
 if role in ("staff", "manager"):
     sections["Staff"] = [
         st.Page("views/kitchen.py", title="Kitchen", icon=":material/coffee_maker:"),
         st.Page("views/service.py", title="Service desk", icon=":material/room_service:"),
     ]
-if role == "manager":
-    sections["Management"] = [
-        st.Page("views/insights.py", title="Insights", icon=":material/insights:"),
-        st.Page("views/marketing.py", title="Marketing studio", icon=":material/campaign:"),
-        st.Page("views/hiring.py", title="Hiring", icon=":material/group_add:"),
-        st.Page("views/team.py", title="Users and roles", icon=":material/admin_panel_settings:"),
-    ]
+sections["Café"] = cafe
+sections["You"] = account
 
-page = st.navigation(sections)
+page = st.navigation(sections, expanded=True)
+if st.session_state.pop("just_logged_in", False) and is_manager:
+    st.switch_page("views/dashboard.py")
 ui.sidebar_account()
 page.run()

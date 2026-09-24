@@ -5,16 +5,21 @@ from core import ai, auth, hours
 
 CSS = """
 <style>
-h1, h2, h3 { letter-spacing: -0.01em; }
-h1 { font-weight: 700; }
-.fch-lead { font-size: 1.05rem; color: #3E4B4F; max-width: 60ch; margin-top: -0.4rem; }
-.fch-status { display: inline-block; padding: 0.35rem 0.8rem; border-radius: 999px; font-weight: 600; font-size: 0.95rem; }
-.fch-open { background: #DCEFE6; color: #145A3C; }
-.fch-closed { background: #F3E3DA; color: #7A3418; }
-.fch-hero { padding: 2.2rem 0 1.4rem 0; border-bottom: 1px solid #D5DEDB; margin-bottom: 1.2rem; }
-.fch-hero h1 { font-size: 2.6rem; line-height: 1.1; margin: 0 0 0.6rem 0; }
-.fch-hero p { font-size: 1.15rem; max-width: 52ch; color: #33413F; }
-.fch-muted { color: #5B6A68; font-size: 0.9rem; }
+:root { --um-blue: #00274C; --um-maize: #FFCB05; }
+h1, h2, h3 { color: var(--um-blue); letter-spacing: -0.01em; }
+.fch-lead { font-size: 1.05rem; color: #3B4A60; max-width: 62ch; margin-top: -0.4rem; }
+.fch-status { display: inline-block; padding: 0.35rem 0.85rem; border-radius: 999px; font-weight: 700; font-size: 0.95rem; }
+.fch-open { background: var(--um-maize); color: var(--um-blue); }
+.fch-closed { background: #E3E8EF; color: var(--um-blue); }
+.fch-hero { background: var(--um-blue); color: #fff; padding: 2.4rem 2rem 1.9rem 2rem; border-radius: 0.5rem;
+            border-bottom: 6px solid var(--um-maize); margin-bottom: 1.2rem; }
+.fch-hero h1 { color: var(--um-maize); font-size: 2.7rem; line-height: 1.08; margin: 0 0 0.6rem 0; }
+.fch-hero p { color: #E8EDF4; font-size: 1.15rem; max-width: 52ch; margin: 0; }
+.fch-muted { color: #5B6A7E; font-size: 0.9rem; }
+[data-testid="stMetric"] { border-left: 4px solid var(--um-maize); padding-left: 0.75rem; }
+[data-testid="stMetricValue"] { color: var(--um-blue); }
+section[data-testid="stSidebar"] button[kind="primary"],
+section[data-testid="stSidebar"] button[kind="primaryFormSubmit"] { color: var(--um-blue) !important; font-weight: 700; }
 </style>
 """
 
@@ -36,7 +41,7 @@ def status_pill():
 
 
 def money(x):
-    return f"${x:,.2f}"
+    return f"-${abs(x):,.2f}" if x < 0 else f"${x:,.2f}"
 
 
 def ai_mode_note():

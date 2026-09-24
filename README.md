@@ -22,13 +22,16 @@ customer chat, sentiment analysis, order triage, hiring interviews, marketing co
 - Kitchen queue sorted by curbside arrivals, AI priority, then due time; scheduled orders appear 20 minutes before pickup
 - Service desk for handoffs, curbside arrivals, and the day's reservations (seat, finish, no-show)
 
-**Managers**
-- Insights: revenue, top items, busy hours, fulfillment mix, sentiment trends, topics, and each regular's favorite item
-- Score reviews from text: paste reviews or upload a CSV, get sentiment and a 1 to 5 score, download results
-- AI brief with findings and suggested actions
-- Marketing studio that drafts copy from real sales and review data
-- Hiring dashboard with interview transcripts and AI scores
-- User and role management
+**Managers** (managers land on the dashboard when they log in)
+- Manager dashboard with four tabs:
+  - Profit and loss: revenue, gross and net profit, cost of goods, labor, overhead, prime cost, a daily P&L chart, a downloadable P&L, and a watch list that flags costs or service levels outside target
+  - Orders: volume, average ticket, on-time rate, curbside wait after check-in, busiest times heatmap, fulfillment mix, and reservation stats (no-show rate, table use)
+  - Products: profit and margin by item and a menu engineering chart that sorts items into Stars, Plowhorses, Puzzles, and Dogs
+  - HR and labor: hours, labor cost and labor % of sales, sales per labor hour, overtime, orders per staff member by hour, pay by employee, and the hiring pipeline
+- Staff and payroll: team roster with pay rates, shift logging, and automatic overtime past 40 hours a week
+- Costs: monthly overhead, one-off expenses, card fee and payroll tax rates, and per-item ingredient costs
+- Customer insights: sentiment trends, topics, each regular's favorite item, and review scoring from pasted text or a CSV
+- AI brief with findings and suggested actions, marketing studio, hiring dashboard, and user role management
 
 ## AI features and where they live
 
@@ -39,7 +42,7 @@ customer chat, sentiment analysis, order triage, hiring interviews, marketing co
 | Order triage | `core/ai.py` `prioritize_order` | Reads order notes and flags urgent or allergy orders for the kitchen |
 | Hiring interview | `views/careers.py` | Asks adaptive questions, then scores the candidate |
 | Marketing | `views/marketing.py` | Drafts slogans, posts, emails, and promotions |
-| Insights brief | `views/insights.py` | Turns sales and sentiment data into findings and actions |
+| Insights brief | `views/dashboard.py` | Turns P&L, order, product, and labor data into findings and actions |
 
 Without an API key the app still runs. Each feature falls back to a simple rule-based version and a note appears on the page.
 
@@ -70,7 +73,7 @@ The first run creates two accounts from the `[admin]` and `[staff]` secrets. If 
 
 Change these through secrets before sharing the app. Managers can promote any user to staff or manager on the Users and roles page.
 
-To fill the charts for a demo, open **Insights > Demo data > Load sample data**. Sample customers use the password `Sample#2026`.
+To fill the dashboard for a demo, open **Manager dashboard > Demo data > Load sample data**. It adds 30 days of orders, shifts, expenses, reservations, reviews, and applicants. Sample customers use the password `Sample#2026`.
 
 ## Data storage
 
@@ -93,6 +96,8 @@ core/
   auth.py               accounts, roles, hashing, password reset
   db.py                 SQLite schema and helpers
   feedback.py           feedback storage
+  finance.py            cost settings, overtime, and profit and loss
+  hr.py                 employees and shifts
   hours.py              business hours and Dearborn local time
   mailer.py             SMTP email
   menu.py               menu loading and pricing
@@ -106,7 +111,9 @@ data/menu.json          the menu
 
 ## Changing the business
 
-- Menu: edit `data/menu.json`. Use a single value for one-size items or a list for sizes, calories, and prices.
+- Menu: edit `data/menu.json`. Use a single value for one-size items or a list for sizes, calories, prices, and costs.
+- Costs, pay rates, and overhead: use the Costs and Staff and payroll pages in the app.
+- Colors: `.streamlit/config.toml` and the CSS in `core/ui.py` (Maize `#FFCB05`, Blue `#00274C`).
 - Hours: `HOURS` in `core/hours.py`.
 - Tables and seating length: `TABLES` and `SEATING_MINUTES` in `core/reservations.py`.
 - Pickup slot size and capacity: `SLOT_MINUTES` and `SLOT_CAPACITY` in `core/orders.py`.

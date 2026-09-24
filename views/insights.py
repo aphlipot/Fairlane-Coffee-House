@@ -1,13 +1,12 @@
-import io
 from collections import Counter
 from datetime import timedelta
 
 import pandas as pd
 import streamlit as st
 
-from core import ai, db, feedback, hours, orders, sample_data, ui
+from core import ai, db, feedback, hours, sample_data, ui
 
-ui.header("Insights", "Sales, customer sentiment, and preferences in one place.")
+ui.header("Customer insights", "What customers say, what regulars order, and a tool to score reviews from text.")
 ui.require_role("manager")
 ui.ai_mode_note()
 
@@ -25,9 +24,9 @@ f_rows = feedback.between(start, end + timedelta(days=1))
 if not o_rows and not f_rows:
     st.info("No orders or feedback in this period yet.")
     if st.button("Load 30 days of sample data"):
-        with st.spinner("Creating sample orders and reviews"):
+        with st.spinner("Creating sample data"):
             n = sample_data.load()
-        st.success(f"Added {n} sample orders.")
+        st.success(f"Added {n:,} sample orders.")
         st.rerun()
     st.stop()
 
@@ -36,31 +35,8 @@ odf["created_at"] = pd.to_datetime(odf["created_at"])
 live = odf[odf["status"] != "cancelled"]
 idf = pd.DataFrame(i_rows)
 
-sales_tab, sentiment_tab, prefs_tab, score_tab = st.tabs(
-    ["Sales and operations", "Customer sentiment", "Customer preferences", "Score reviews from text"])
-
-with sales_tab:
-    m = st.columns(4)
-    m[0].metric("Revenue", ui.money(live["total"].sum()))
-    m[1].metric("Orders", f"{len(live):,}")
-    m[2].metric("Average ticket", ui.money(live["total"].mean() if len(live) else 0))
-    m[3].metric("Cancelled", f"{(odf['status'] == 'cancelled').mean():.0%}")
-
-    daily = live.groupby(live["created_at"].dt.date)["total"].sum().rename("Revenue")
-    st.markdown("**Revenue by day**")
-    st.line_chart(daily)
-
-    c1, c2 = st.columns(2)
-    with c1:
-        st.markdown("**Top items by quantity**")
-        if not idf.empty:
-            st.bar_chart(idf.groupby("product")["quantity"].sum().sort_values(ascending=False).head(10), horizontal=True)
-    with c2:
-        st.markdown("**Orders by hour of day**")
-        st.bar_chart(live.groupby(live["created_at"].dt.hour).size().rename("Orders"))
-    st.markdown("**How customers get their orders**")
-    mix = live["fulfillment"].map(orders.FULFILLMENT_LABELS).value_counts()
-    st.bar_chart(mix, horizontal=True)
+sentiment_tab, prefs_tab, score_tab = st.tabs(
+    ["Customer sentiment", "Customer preferences", "Score reviews from text"])
 
 with sentiment_tab:
     if not f_rows:
@@ -145,37 +121,3 @@ with score_tab:
         st.metric("Average score", f"{out['Score (1 to 5)'].mean():.2f}")
         st.download_button("Download results (CSV)", out.to_csv(index=False), "scored_reviews.csv", "text/csv")
 
-st.divider()
-st.subheader("AI brief")
-st.caption("A short summary of this period with suggested actions.")
-if st.button("Write the brief"):
-    lines = [f"Period: last {days} days.",
-             f"Revenue {live['total'].sum():.2f}, orders {len(live)}, average ticket {live['total'].mean():.2f}.",
-             f"Fulfillment mix: {live['fulfillment'].value_counts().to_dict()}.",
-             f"Orders by hour: {live.groupby(live['created_at'].dt.hour).size().to_dict()}."]
-    if not idf.empty:
-        lines.append(f"Top items: {idf.groupby('product')['quantity'].sum().sort_values(ascending=False).head(8).to_dict()}.")
-    if f_rows:
-        fdf = pd.DataFrame(f_rows)
-        lines.append(f"Feedback count {len(fdf)}, average score {fdf['stars'].mean():.2f}, "
-                     f"sentiment {fdf['sentiment'].value_counts().to_dict()}.")
-        lines.append(f"Topics: {dict(Counter(t for ts in fdf['topics'] for t in ts))}.")
-        lines.append("Recent negative comments: " + " | ".join(fdf[fdf['sentiment'] == 'negative']['comment'].tail(5)))
-    res_count = db.one("SELECT COUNT(*) AS n FROM reservations WHERE start_at >= ? AND status != 'cancelled'", (hours.iso(start),))
-    lines.append(f"Reservations: {res_count['n']}.")
-    with st.spinner("Writing"):
-        brief = ai.insight_brief("\n".join(lines))
-    if brief:
-        st.markdown(brief)
-    else:
-        st.write("Add an OpenAI API key to generate the brief. Here is the data it would use:")
-        st.code("\n".join(lines))
-
-with st.expander("Demo data"):
-    st.caption("Adds 30 days of sample customers, orders, and reviews so the charts have something to show. "
-               "Sample customers log in with the password Sample#2026.")
-    if st.button("Load sample data"):
-        with st.spinner("Creating sample orders and reviews"):
-            n = sample_data.load()
-        st.success(f"Added {n} sample orders.")
-        st.rerun()

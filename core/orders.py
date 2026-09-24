@@ -31,6 +31,7 @@ def add_to_cart(category, product, flavor, size, quantity, special):
         "category": category, "product": product, "flavor": flavor or "", "size": size or "",
         "quantity": int(quantity), "unit_price": menu.price_for(p, size),
         "calories": menu.calories_for(p, size), "special_request": special.strip(),
+        "unit_cost": menu.cost_for(p, size),
     })
 
 
@@ -124,9 +125,10 @@ def place_order(user, items, fulfillment, scheduled_for=None, notes="", vehicle=
         for i in items:
             conn.execute(
                 """INSERT INTO order_items (order_id, category, product, flavor, size, quantity, unit_price,
-                   calories, special_request) VALUES (?,?,?,?,?,?,?,?,?)""",
+                   calories, special_request, unit_cost) VALUES (?,?,?,?,?,?,?,?,?,?)""",
                 (order_id, i["category"], i["product"], i["flavor"], i["size"], i["quantity"],
-                 i["unit_price"], i["calories"], i["special_request"]),
+                 i["unit_price"], i["calories"], i["special_request"],
+                 i.get("unit_cost", menu.cost_for(menu.find(i["product"])[1], i["size"]))),
             )
     return True, order_id
 

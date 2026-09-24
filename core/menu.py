@@ -88,3 +88,34 @@ def menu_as_text():
                 f"Size: {size or 'one size'}. Calories: {cal}. Price: {price_label(p)}."
             )
     return "\n".join(lines)
+
+
+def _cost_key(p, size):
+    return f"{p['Product Name']}|{size or ''}"
+
+
+def default_cost(p, size=None):
+    """Ingredient and packaging cost per unit from menu.json (30% of price if missing)."""
+    cost = p.get("Cost")
+    if cost is None:
+        return round(price_for(p, size) * 0.30, 2)
+    if isinstance(cost, list):
+        return cost[p["Size"].index(size) if size in p["Size"] else 0]
+    return cost
+
+
+def cost_for(p, size=None):
+    """Current unit cost, using manager overrides from the Costs page when set."""
+    from core import db
+    overrides = db.get_setting("item_costs", {})
+    return overrides.get(_cost_key(p, size), default_cost(p, size))
+
+
+def cost_rows():
+    """One row per product and size for the cost editor."""
+    rows = []
+    for cat, p in all_products():
+        for size in (sizes(p) or [""]):
+            rows.append({"key": _cost_key(p, size), "Category": cat, "Item": p["Product Name"], "Size": size or "One size",
+                         "Price": price_for(p, size), "Cost": cost_for(p, size)})
+    return rows
